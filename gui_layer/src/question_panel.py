@@ -56,10 +56,16 @@ class InspectionPanel(QWidget):
         the dropdown.
 
         This method fetches side names from the 'sides' table and adds
-        them as items in the dropdown.
+        them as items in the dropdown. Clears the dropdown first to 
+        avoid duplications.
         """
         conn = sqlite3.connect('inspection_data.db')
         c = conn.cursor()
+
+        # Clear the dropdown first to avoid duplicates
+        self.side_dropdown.clear()
+        self.side_dropdown.addItem("Select Side")
+
         c.execute("SELECT side_name FROM sides")
         sides = c.fetchall()
         conn.close()
@@ -82,7 +88,14 @@ class InspectionPanel(QWidget):
 
             # Fetch side_id
             c.execute("SELECT id FROM sides WHERE side_name=?", (side_name,))
-            side_id = c.fetchone()[0]
+            side_data = c.fetchone()
+
+            if side_data is None:
+                # Handle case where the side no longer exists
+                self.clear_questions()
+                return
+
+            side_id = side_data[0]
 
             # Fetch questions for this side
             c.execute(
@@ -92,10 +105,7 @@ class InspectionPanel(QWidget):
             conn.close()
 
             # Clear previous questions and answers
-            while self.form_layout.count():
-                child = self.form_layout.takeAt(0)
-                if child.widget():
-                    child.widget().deleteLater()
+            self.clear_questions()
 
             # Dynamically add new questions
             for question in questions:
@@ -106,6 +116,12 @@ class InspectionPanel(QWidget):
                 self.question_labels.append(label)
                 self.answer_fields.append(answer_field)
 
+    def clear_questions(self):
+        """Clear the form layout to remove all the previous questions."""
+        while self.form_layout.count():
+            child = self.form_layout.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
 
 def run_standalone_panel():
     """
