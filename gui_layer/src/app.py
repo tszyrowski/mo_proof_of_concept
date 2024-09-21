@@ -2,17 +2,19 @@ import os
 import sys
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QPushButton,
-    QStackedWidget, QCheckBox, QHBoxLayout
+    QStackedWidget, QCheckBox, QHBoxLayout, QLabel
 )
 
 try:
     from gui_layer.src.question_panel import InspectionPanel
+    from gui_layer.src.login_dialog import LoginDialog
     from gui_layer.src.side_edit_panel import SideEditPanel
 except ModuleNotFoundError:
     sys.path.append(
         os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     )
     from gui_layer.src.question_panel import InspectionPanel
+    from gui_layer.src.login_dialog import LoginDialog
     from gui_layer.src.side_edit_panel import SideEditPanel
 
 
@@ -21,7 +23,8 @@ class MainWindow(QMainWindow):
     Main window containing both the inspection and site edit panels.
 
     The window allows users to switch between embedded panels or 
-    open them in a new window using a checkbox.
+    open them in a new window using a checkbox. Access to the 
+    side edit panel requires admin login.
     """
     
     def __init__(self):
@@ -43,9 +46,16 @@ class MainWindow(QMainWindow):
         self.switch_to_side_edit_button = QPushButton("Site Edit Panel")
         self.new_window_checkbox = QCheckBox("Open in New Window")
 
+        # Login message and logout button
+        self.login_message = QLabel("")
+        self.logout_button = QPushButton("Logout")
+        self.logout_button.setVisible(False)
+
         top_layout.addWidget(self.switch_to_inspection_button)
         top_layout.addWidget(self.switch_to_side_edit_button)
         top_layout.addWidget(self.new_window_checkbox)
+        top_layout.addWidget(self.login_message)
+        top_layout.addWidget(self.logout_button)
 
         main_layout.addLayout(top_layout)
 
@@ -63,12 +73,35 @@ class MainWindow(QMainWindow):
         self.switch_to_inspection_button.clicked.connect(
             lambda: self.handle_panel(self.inspection_panel, "Inspection Panel")
         )
-        self.switch_to_side_edit_button.clicked.connect(
-            lambda: self.handle_panel(self.side_edit_panel, "Site Edit Panel")
-        )
+        self.switch_to_side_edit_button.clicked.connect(self.handle_login)
 
         # Connect signal to refresh InspectionPanel when a site is changed
         self.side_edit_panel.site_changed.connect(self.inspection_panel.load_sides)
+
+        # Logout functionality
+        self.logout_button.clicked.connect(self.logout)
+
+    def handle_login(self):
+        """
+        Handle the login process when the Site Edit Panel is accessed.
+
+        If the user is not logged in, show the login dialog.
+        """
+        login_dialog = LoginDialog()
+        if login_dialog.exec():  # If login is successful
+            self.login_message.setText("Logged in as Admin")
+            self.switch_to_side_edit_button.setEnabled(True)
+            self.logout_button.setVisible(True)
+            self.handle_panel(self.side_edit_panel, "Site Edit Panel")
+
+    def logout(self):
+        """
+        Handle the logout process by disabling access to the Site Edit Panel.
+        """
+        self.login_message.setText("")
+        self.logout_button.setVisible(False)
+        self.side_edit_panel.setEnabled(False) 
+        self.stack.setCurrentWidget(self.inspection_panel)  # Switch to inspection panel
 
     def handle_panel(self, panel, panel_name):
         """
