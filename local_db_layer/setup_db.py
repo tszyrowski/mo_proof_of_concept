@@ -15,6 +15,15 @@ def setup_database():
                  question TEXT,
                  FOREIGN KEY (side_id) REFERENCES sides(id))''')
 
+    # Create a table for users
+    c.execute('''CREATE TABLE IF NOT EXISTS users (
+                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 username TEXT,
+                 password TEXT)''')
+
+    # Insert admin user
+    c.execute("INSERT OR IGNORE INTO users (username, password) VALUES ('admin', 'pass')")
+
     # Insert some dummy data
     c.execute("INSERT INTO sides (side_name) VALUES ('Side A')")
     c.execute("INSERT INTO sides (side_name) VALUES ('Side B')")
