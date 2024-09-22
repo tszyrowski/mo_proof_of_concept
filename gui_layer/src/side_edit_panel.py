@@ -1,7 +1,13 @@
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QLineEdit, QPushButton, QTableWidget, 
-    QTableWidgetItem, QHBoxLayout, QInputDialog
+    QWidget,
+    QVBoxLayout,
+    QLineEdit,
+    QPushButton,
+    QTableWidget,
+    QTableWidgetItem,
+    QHBoxLayout,
+    QInputDialog,
 )
 import sqlite3
 
@@ -18,13 +24,13 @@ class SideEditPanel(QWidget):
     site_changed : Signal
         Emitted when a site is added, edited, or deleted.
     """
-    
+
     site_changed = Signal()  # Signal to notify when a site is modified
-    
+
     def __init__(self):
         """Initialize the SideEditPanel."""
         super().__init__()
-        self.setWindowTitle('Side Edit Panel')
+        self.setWindowTitle("Side Edit Panel")
         self.setGeometry(100, 100, 600, 400)
 
         # Main layout
@@ -39,7 +45,7 @@ class SideEditPanel(QWidget):
         # Table for displaying sides
         self.sides_table = QTableWidget(self)
         self.sides_table.setColumnCount(1)
-        self.sides_table.setHorizontalHeaderLabels(['Side Name'])
+        self.sides_table.setHorizontalHeaderLabels(["Side Name"])
         self.layout.addWidget(self.sides_table)
 
         # Buttons to add, edit, and delete sides
@@ -66,7 +72,7 @@ class SideEditPanel(QWidget):
 
     def load_sides(self):
         """Load all sides from the database and display them in the table."""
-        conn = sqlite3.connect('inspection_data.db')
+        conn = sqlite3.connect("inspection_data.db")
         c = conn.cursor()
         c.execute("SELECT side_name FROM sides")
         sides = c.fetchall()
@@ -86,9 +92,9 @@ class SideEditPanel(QWidget):
 
     def add_side(self):
         """Open a dialog to add a new side."""
-        side_name, ok = QInputDialog.getText(self, 'Add Side', 'Enter side name:')
+        side_name, ok = QInputDialog.getText(self, "Add Side", "Enter side name:")
         if ok and side_name:
-            conn = sqlite3.connect('inspection_data.db')
+            conn = sqlite3.connect("inspection_data.db")
             c = conn.cursor()
             c.execute("INSERT INTO sides (side_name) VALUES (?)", (side_name,))
             conn.commit()
@@ -104,12 +110,14 @@ class SideEditPanel(QWidget):
 
         side_name = self.sides_table.item(current_row, 0).text()
         new_name, ok = QInputDialog.getText(
-            self, 'Edit Side', 'Edit side name:', text=side_name)
+            self, "Edit Side", "Edit side name:", text=side_name
+        )
         if ok and new_name:
-            conn = sqlite3.connect('inspection_data.db')
+            conn = sqlite3.connect("inspection_data.db")
             c = conn.cursor()
-            c.execute("UPDATE sides SET side_name=? WHERE side_name=?", 
-                      (new_name, side_name))
+            c.execute(
+                "UPDATE sides SET side_name=? WHERE side_name=?", (new_name, side_name)
+            )
             conn.commit()
             conn.close()
             self.load_sides()  # Reload sides after editing
@@ -123,9 +131,10 @@ class SideEditPanel(QWidget):
 
         side_name = self.sides_table.item(current_row, 0).text()
         confirm, ok = QInputDialog.getText(
-            self, 'Delete Side', f'Delete side: {side_name}? (yes/no)')
-        if ok and confirm.lower() == 'yes':
-            conn = sqlite3.connect('inspection_data.db')
+            self, "Delete Side", f"Delete side: {side_name}? (yes/no)"
+        )
+        if ok and confirm.lower() == "yes":
+            conn = sqlite3.connect("inspection_data.db")
             c = conn.cursor()
             c.execute("DELETE FROM sides WHERE side_name=?", (side_name,))
             conn.commit()
