@@ -7,10 +7,9 @@ from PySide6.QtWidgets import QApplication
 try:
     from gui_layer.src.question_panel import InspectionPanel
 except ModuleNotFoundError:
-    sys.path.append(
-        os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-    )
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
     from gui_layer.src.question_panel import InspectionPanel
+
 
 # Ensure there is only one QApplication instance for the test session
 @pytest.fixture(scope="session")
@@ -25,7 +24,7 @@ def app():
 def test_load_sides(app, qtbot):
     """
     Test that the sides are loaded correctly into the dropdown.
-    
+
     Ensure the panel loads sides
     correctly from the SQLite database.
     """
