@@ -1,5 +1,13 @@
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox
+from PySide6.QtWidgets import (
+    QDialog,
+    QVBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QMessageBox,
+)
 import sqlite3
+
 
 class LoginDialog(QDialog):
     """
@@ -37,9 +45,11 @@ class LoginDialog(QDialog):
         username = self.username_input.text()
         password = self.password_input.text()
 
-        conn = sqlite3.connect('inspection_data.db')
+        conn = sqlite3.connect("inspection_data.db")
         c = conn.cursor()
-        c.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
+        c.execute(
+            "SELECT * FROM users WHERE username=? AND password=?", (username, password)
+        )
         result = c.fetchone()
         conn.close()
 

@@ -1,7 +1,12 @@
 import sqlite3
 import sys
 from PySide6.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QComboBox, QLabel, QLineEdit,
+    QApplication,
+    QWidget,
+    QVBoxLayout,
+    QComboBox,
+    QLabel,
+    QLineEdit,
     QFormLayout,
 )
 
@@ -10,7 +15,7 @@ class InspectionPanel(QWidget):
     """
     Inspection panel widget that dynamically loads questions
     based on the selected inspection side from a local SQLite database.
-    
+
     Attributes
     ----------
     layout : QVBoxLayout
@@ -28,7 +33,7 @@ class InspectionPanel(QWidget):
     def __init__(self):
         """Initialize the inspection panel."""
         super().__init__()
-        self.setWindowTitle('Inspection Panel')
+        self.setWindowTitle("Inspection Panel")
         self.setGeometry(100, 100, 400, 300)
 
         # Main layout
@@ -56,10 +61,10 @@ class InspectionPanel(QWidget):
         the dropdown.
 
         This method fetches side names from the 'sides' table and adds
-        them as items in the dropdown. Clears the dropdown first to 
+        them as items in the dropdown. Clears the dropdown first to
         avoid duplications.
         """
-        conn = sqlite3.connect('inspection_data.db')
+        conn = sqlite3.connect("inspection_data.db")
         c = conn.cursor()
 
         # Clear the dropdown first to avoid duplicates
@@ -83,7 +88,7 @@ class InspectionPanel(QWidget):
         side_name = self.side_dropdown.currentText()
 
         if side_name != "Select Side":
-            conn = sqlite3.connect('inspection_data.db')
+            conn = sqlite3.connect("inspection_data.db")
             c = conn.cursor()
 
             # Fetch side_id
@@ -98,9 +103,7 @@ class InspectionPanel(QWidget):
             side_id = side_data[0]
 
             # Fetch questions for this side
-            c.execute(
-                "SELECT question FROM questions WHERE side_id=?", (side_id,)
-            )
+            c.execute("SELECT question FROM questions WHERE side_id=?", (side_id,))
             questions = c.fetchall()
             conn.close()
 
@@ -122,6 +125,7 @@ class InspectionPanel(QWidget):
             child = self.form_layout.takeAt(0)
             if child.widget():
                 child.widget().deleteLater()
+
 
 def run_standalone_panel():
     """
