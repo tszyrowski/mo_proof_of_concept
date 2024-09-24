@@ -103,7 +103,9 @@ class InspectionPanel(QWidget):
             side_id = side_data[0]
 
             # Fetch questions for this side
-            c.execute("SELECT question FROM questions WHERE side_id=?", (side_id,))
+            c.execute(
+                "SELECT question FROM questions WHERE side_id=?", (side_id,)
+            )
             questions = c.fetchall()
             conn.close()
 

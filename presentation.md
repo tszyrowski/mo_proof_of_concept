@@ -1,0 +1,93 @@
+# Proof Of Concept
+
+## Main points
+
+- Unsupportable legacy app
+    - Modular, (Easy to replace, update or add application components)
+    - Well Tested (Comprehensive tests allowing further implementation with confidence)
+    - Well documented (Modular approach allowing to fit one component in the head)
+
+## Modularity
+
+- Well structured parts with clear boundaries and easy interfaces
+    - The app constitute main components:
+        1. Database layer providing a DB access interface
+        2. Transfer/Synchronization layer with on/off-line capabilities. 
+            - Allow for independent trigger
+            - Can be integrated with other app components
+            - Allow introduce of security measures without affecting othe app components
+        3. GUI application
+            - Modular for ease of maintenance
+            - Tested on multiple levels.
+        4. Complex and experimental features developed as stand alone modules
+            - Independent testing
+            - Canary deployment
+
+## Other consideration
+
+- Ease of use and adaptation  
+    The app will b used in the field, hence needs to be user friendly  
+    and design with accessibility in mind
+- Ability to synchronies data after offline operation without data loss or duplication.  
+    Edge case such as single site checked twice  
+    or earlier inspection synchronises after the later one
+- Data recovery
+
+## Testing
+
+Different levels of testing, including:
+
+- **Unit** `gui_layer/test/test_question_panel.py`
+- **Integration** `gui_layer/test/test_integration_panel.py`
+
+Testing as a core element of development process  
+
+- From gathering requirements to acceptance
+- **Behavioral Driven Development**  
+    `gui_layer/test/bdd`
+
+Development equipped with full debugging capabilities through comprehensive testing
+
+- Upscale the team with debugging skills and tools
+
+## Data Syncronisation
+
+>Note: The poc db is idempotent, does recreate fresh each time when run
+
+>Note: No bidirectional synchronisation in poc
+
+>Note: for the PoC no encryption is implemented
+
+Storage format not tide up with other functionality
+    - The preferable storage is in lightweight SQL tables (SQLite)  
+      but app via interface layer, should be able to consume any other format
+    - There may be a need to upload inspection data via offline mechanism  
+      such as emailed txt file.
+    - All above is very dependent upon requirements
+
+Synchronisation needs to include robust check and confirmation mechanisms.
+    - The new data can be timestamped on transfer via Oracle DB triggers.
+
+### Question?:
+- Bidirectional communication and precedence.  
+    Precedence table
+    - Does Local storage takes importance on inspection data?
+    - Does centralised storage takes importance on site data?
+    - ...
+
+- Verification and data continuity
+    How to deal with data corruption?
+
+### Other considerations
+
+- The DB setup depending on environment (dev, stage, test, prod)
+
+## Logging and telemetry
+
+Telemetry fully dependent on current setup and requirements
+
+Logging:
+    - Centralised logging with reusable logger
+    - Logging to a file and stdout
+    - Logs rotation policy
+    - Testable in the code with pytest fixtures
