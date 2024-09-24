@@ -1,1 +1,4 @@
+cx_Oracle
+flask  # optional API endpoint
+python-dotenv
 pyside6

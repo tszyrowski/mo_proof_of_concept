@@ -67,7 +67,8 @@ def test_integration_add_side(app, qtbot, reset_db):
 
     # Fetch the sides from the dropdown and verify the new sides are present
     dropdown_items = [
-        panel.side_dropdown.itemText(i) for i in range(panel.side_dropdown.count())
+        panel.side_dropdown.itemText(i)
+        for i in range(panel.side_dropdown.count())
     ]
 
     # Assert that both new test sides are in the dropdown
