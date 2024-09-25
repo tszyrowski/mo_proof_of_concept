@@ -48,7 +48,8 @@ class LoginDialog(QDialog):
         conn = sqlite3.connect("inspection_data.db")
         c = conn.cursor()
         c.execute(
-            "SELECT * FROM users WHERE username=? AND password=?", (username, password)
+            "SELECT * FROM users WHERE username=? AND password=?",
+            (username, password),
         )
         result = c.fetchone()
         conn.close()
@@ -56,4 +57,6 @@ class LoginDialog(QDialog):
         if result:
             self.accept()  # Close dialog and return success
         else:
-            QMessageBox.warning(self, "Error", "Incorrect username or password.")
+            QMessageBox.warning(
+                self, "Error", "Incorrect username or password."
+            )

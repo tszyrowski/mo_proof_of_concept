@@ -194,7 +194,9 @@ class MainWindow(QMainWindow):
         self.switch_to_side_edit_button.clicked.connect(self.handle_login)
 
         # Connect signal to refresh InspectionPanel when a site is changed
-        self.side_edit_panel.site_changed.connect(self.inspection_panel.load_sides)
+        self.side_edit_panel.site_changed.connect(
+            self.inspection_panel.load_sides
+        )
 
         # Logout functionality
         self.logout_button.clicked.connect(self.logout)

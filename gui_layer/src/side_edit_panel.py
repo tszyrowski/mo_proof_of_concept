@@ -92,7 +92,9 @@ class SideEditPanel(QWidget):
 
     def add_side(self):
         """Open a dialog to add a new side."""
-        side_name, ok = QInputDialog.getText(self, "Add Side", "Enter side name:")
+        side_name, ok = QInputDialog.getText(
+            self, "Add Side", "Enter side name:"
+        )
         if ok and side_name:
             conn = sqlite3.connect("inspection_data.db")
             c = conn.cursor()
@@ -116,7 +118,8 @@ class SideEditPanel(QWidget):
             conn = sqlite3.connect("inspection_data.db")
             c = conn.cursor()
             c.execute(
-                "UPDATE sides SET side_name=? WHERE side_name=?", (new_name, side_name)
+                "UPDATE sides SET side_name=? WHERE side_name=?",
+                (new_name, side_name),
             )
             conn.commit()
             conn.close()
