@@ -23,6 +23,7 @@ class SyncThread(QThread):
     QThread to run the sync process in a separate thread.
     Emits signals for sync success or failure.
     """
+
     sync_success = Signal()
     sync_failed = Signal(str)
 
