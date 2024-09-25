@@ -2,31 +2,33 @@ import os
 import sys
 from PySide6.QtWidgets import (
     QApplication,
-    QMainWindow,
-    QWidget,
-    QVBoxLayout,
-    QPushButton,
-    QStackedWidget,
     QCheckBox,
+    QComboBox,
+    QDialog,
     QHBoxLayout,
     QLabel,
-    QDialog,
+    QMainWindow,
+    QPushButton,
+    QStackedWidget,
     QSlider,
-    QComboBox,
+    QWidget,
+    QVBoxLayout,
 )
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor, QAction
+from PySide6.QtGui import QAction, QColor, QPalette
 
 
 try:
     from gui_layer.src.question_panel import InspectionPanel
     from gui_layer.src.login_dialog import LoginDialog
     from gui_layer.src.side_edit_panel import SideEditPanel
+    from gui_layer.src.sync_handler import run_sync_with_timeout
 except ModuleNotFoundError:
     sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
     from gui_layer.src.question_panel import InspectionPanel
     from gui_layer.src.login_dialog import LoginDialog
     from gui_layer.src.side_edit_panel import SideEditPanel
+    from gui_layer.src.sync_handler import run_sync_with_timeout
 
 
 class Settings:
@@ -164,6 +166,12 @@ class MainWindow(QMainWindow):
         self.switch_to_side_edit_button = QPushButton("Site Edit Panel")
         self.new_window_checkbox = QCheckBox("Open in New Window")
 
+        # Sync DB Button
+        self.sync_button = QPushButton("Sync DB")
+        self.sync_button.setStyleSheet("background-color: red; color: white;")
+        self.sync_button.clicked.connect(self.trigger_sync)
+        top_layout.addWidget(self.sync_button)
+
         # Login message and logout button
         self.login_message = QLabel("")
         self.logout_button = QPushButton("Logout")
@@ -202,6 +210,12 @@ class MainWindow(QMainWindow):
         self.logout_button.clicked.connect(self.logout)
         # Apply initial settings
         self.settings.apply_settings(self)
+
+    def trigger_sync(self):
+        """
+        Trigger the DB sync process and display success/failure message.
+        """
+        run_sync_with_timeout(self)
 
     def open_contrast_dialog(self):
         """Open the contrast adjustment dialog."""
